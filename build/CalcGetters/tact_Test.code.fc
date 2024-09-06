@@ -1,0 +1,213 @@
+#pragma version =0.4.4;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_Test.headers.fc";
+#include "tact_Test.stdlib.fc";
+#include "tact_Test.storage.fc";
+
+;;
+;; Contract Test functions
+;;
+
+(int, cell) $Test$_contract_init((int, cell) $idAndData) impure inline_ref {
+    var (($idAndData'id, $idAndData'data)) = $idAndData;
+    var (($self'id, $self'anotherData)) = (null(), null());
+    $self'id = $idAndData'id;
+    $self'anotherData = $idAndData'data;
+    return ($self'id, $self'anotherData);
+}
+
+((int, cell), int) $Test$_fun_testGetter((int, cell) $self) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    return (($self'id, $self'anotherData), 1);
+}
+
+((int, cell), int) $Test$_fun_test_getter((int, cell) $self) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    return (($self'id, $self'anotherData), 2);
+}
+
+((int, cell), int) $Test$_fun_Test_getter((int, cell) $self) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    return (($self'id, $self'anotherData), 3);
+}
+
+((int, cell), (int, cell)) $Test$_fun_contractData((int, cell) $self) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    return (($self'id, $self'anotherData), ($self'id, $self'anotherData));
+}
+
+((int, cell), (int, int)) $Test$_fun_structAsInput((int, cell) $self, (int, int) $s) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    var (($s'a, $s'b)) = $s;
+    return (($self'id, $self'anotherData), ($s'a, $s'b));
+}
+
+((int, cell), int) $Test$_fun_messageAsInput1((int, cell) $self, (int, cell) $m) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    var (($m'id, $m'data)) = $m;
+    return (($self'id, $self'anotherData), $m'id);
+}
+
+((int, cell), (int, cell)) $Test$_fun_messageAsInput2((int, cell) $self, (int, cell) $m) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    var (($m'id, $m'data)) = $m;
+    return (($self'id, $self'anotherData), ($m'id, $m'data));
+}
+
+((int, cell), slice) $Test$_fun_messageAsInput3((int, cell) $self, (int, cell) $m) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    var (($m'id, $m'data)) = $m;
+    var ($init'code, $init'data) = $Test$_init_child(__tact_context_sys, ($m'id, $m'data));
+    return (($self'id, $self'anotherData), __tact_compute_contract_address(0, $init'code, $init'data));
+}
+
+((int, cell), (int, cell)) $Test$_fun_contractAsInput((int, cell) $self, (int, cell) $test) impure inline_ref {
+    var (($self'id, $self'anotherData)) = $self;
+    var (($test'id, $test'anotherData)) = $test;
+    return (($self'id, $self'anotherData), ($test'id, $test'anotherData));
+}
+
+;;
+;; Receivers of a Contract Test
+;;
+
+(((int, cell)), ()) $Test$_internal_binary_SetIdAndData((int, cell) $self, (int, cell) $msg) impure inline {
+    var ($self'id, $self'anotherData) = $self;
+    var ($msg'id, $msg'data) = $msg;
+    $self'id = $msg'id;
+    $self'anotherData = $msg'data;
+    return (($self'id, $self'anotherData), ());
+}
+
+(((int, cell)), ()) $Test$_internal_binary_Deploy((int, cell) $self, (int) $deploy) impure inline {
+    var ($self'id, $self'anotherData) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'id, $self'anotherData)~$Test$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'id, $self'anotherData), ());
+}
+
+;;
+;; Get methods of a Contract Test
+;;
+
+_ %testGetter() method_id(97823) {
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_testGetter();
+    return res;
+}
+
+_ %test_getter() method_id(111014) {
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_test_getter();
+    return res;
+}
+
+_ %Test_getter() method_id(72668) {
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_Test_getter();
+    return res;
+}
+
+_ %contractData() method_id(71601) {
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_contractData();
+    return $Test$_to_external(res);
+}
+
+_ %structAsInput(tuple $s) method_id(128711) {
+    (int, int) $s = $S$_from_tuple($s);
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_structAsInput($s);
+    return $S$_to_external(res);
+}
+
+_ %messageAsInput1(tuple $m) method_id(122562) {
+    (int, cell) $m = $SetIdAndData$_from_tuple($m);
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_messageAsInput1($m);
+    return res;
+}
+
+_ %messageAsInput2(tuple $m) method_id(126625) {
+    (int, cell) $m = $SetIdAndData$_from_tuple($m);
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_messageAsInput2($m);
+    return $SetIdAndData$_to_external(res);
+}
+
+_ %messageAsInput3(tuple $m) method_id(130688) {
+    (int, cell) $m = $SetIdAndData$_from_tuple($m);
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_messageAsInput3($m);
+    return res;
+}
+
+_ %contractAsInput(tuple $test) method_id(125793) {
+    (int, cell) $test = $Test$_from_tuple($test);
+    var self = $Test$_contract_load();
+    var res = self~$Test$_fun_contractAsInput($test);
+    return $Test$_to_external(res);
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract Test
+;;
+
+((int, cell), int) $Test$_contract_router_internal((int, cell) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive SetIdAndData message
+    if (op == 1746430141) {
+        var msg = in_msg~$SetIdAndData$_load();
+        self~$Test$_internal_binary_SetIdAndData(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$Test$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $Test$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$Test$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $Test$_contract_store(self);
+}
